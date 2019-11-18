@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Madding</title>
+    <style>
+        tr,td,table,thead{
+            border-collapse: collapse;
+            border: solid 2px black;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h2>Madding</h2>
+        Username: <input id="username" type="text"><br><br>
+        Password: <input id="password" type="text"><br><br>
+        <button onclick="btnLogin()">L O G I N</button><br><br>
+        <table>
+            <thead>
+                <tr>
+                    <td>No. </td>
+                    <td>Kegiatan</td>
+                    <td>Hari</td>
+                    <td>Poster</td>
+                    <td>Act</td>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+            <tfoot>
+                    
+               </tfoot>
+        </table>
+        <h2></h2>
+        <h2></h2>
+    </center>
+</body>
+<script>
+    class toDo {
+        constructor(kegiatan,hari,poster){
+            this.kegiatan = kegiatan,
+            this.hari = hari,
+            this.poster = poster
+        }
+    }
+
+    var listData = [
+        new toDo('Shopping','Minggu','https://static.toiimg.com/photo/59632433/.jpg'),
+        new toDo('Yoga','Senin','https://www.medicalnewstoday.com/content/images/articles/318/318774/a-woman-practicing-yoga-on-the-beach.jpg'),
+        new toDo('Studying','Selasa','https://i.cbc.ca/1.3094849.1433113597!/fileImage/httpImage/image.jpg_gen/derivatives/16x9_780/student-studying.jpg')
+    ]
+
+    class masterUser {
+      constructor(x, y, z) {
+        (this.username = x), (this.password = y), (this.role = z);
+      }
+    }
+
+    var dataUser = [
+      new masterUser("febry", "123", "admin"),
+      new masterUser("mukti", "123", "customer")
+    ]
+
+    var outputUser=''
+    const showUser = (kegiatan) =>{
+        kegiatan.forEach((value,index)=>{
+            outputUser+=`<tr>
+                    <td>${index+1}</td>
+                    <td>${value.kegiatan}</td>
+                    <td>${value.hari}</td>
+                    <td><img src="${value.poster}" alt="poster" width="100px"></td>
+                    <td>
+                </tr>`
+                document.getElementsByTagName('tbody')[0].innerHTML = outputUser
+        })
+    }
+    //showUser(listData)
+    var indexEdit = -1
+    var indexDelete = -1
+    
+    const showAdmin = (kegiatan) =>{
+        var outputAdmin = ''
+        kegiatan.forEach((value,index)=>{
+            outputAdmin+=
+                `<tr>
+                    <td>${index+1}</td>
+                    <td>${value.kegiatan}</td>
+                    <td>${value.hari}</td>
+                    <td><img src="${value.poster}" alt="poster" width="100px"></td>
+                    <td><button onclick="onDelete(${index})">DELETE</button>  <button onclick="">EDIT</button>
+                </tr>`
+                document.getElementsByTagName('tbody')[0].innerHTML = outputAdmin
+        })
+        document.getElementsByTagName('tfoot')[0].innerHTML=
+                    `<tr>
+                       <td></td>
+                       <td><input type="text" class="addAktifitas"></td>
+                       <td>
+                        <select value="" class="addAktifitas">
+                                <option name="" id="">Senin</option>
+                                <option name="" id="">Selasa</option>
+                                <option name="" id="">Rabu</option>
+                                <option name="" id="">Kamis</option>
+                                <option name="" id="">Jum'at</option>
+                                <option name="" id="">Sabtu</option>
+                                <option name="" id="">Minggu</option>
+                            </option>
+                        </td>
+                       <td><input type="text" class="addAktifitas"></td>
+                       <td><button onclick="onAddAktifitasKlik()">Add</button></td>
+                   </tr>`
+    }
+    //showAdmin(listData)
+
+
+    var dataUserLogin = {}
+    const btnLogin = ()=>{
+        var username = document.getElementById('username').value
+        var password = document.getElementById('password').value
+        console.log(username)
+        console.log(password)
+
+        var arrBaru = dataUser.filter(
+           val => val.username == username && val.password == password
+        )
+        dataUserLogin = arrBaru[0]
+        if(dataUserLogin){
+            document.getElementById('username').innerHTML = dataUserLogin.username
+            if(dataUserLogin.role==='admin'){
+                showAdmin(listData)
+                document.getElementsByTagName('h2')[1].innerHTML=dataUserLogin.username
+                document.getElementsByTagName('h2')[2].innerHTML=`<button onclick="logout()">LOGOUT</button>`
+            }else{
+                showUser(listData)
+                document.getElementsByTagName('h2')[1].innerHTML=dataUserLogin.username
+                document.getElementsByTagName('h2')[2].innerHTML=`<button onclick="logout()">LOGOUT</button>`
+            }
+        }else{
+            document.getElementsByTagName('h2')[1].innerHTML='User yang anda masukan salah'
+        }
+    }
+
+    const onAddAktifitasKlik = () =>{
+        var input = document.getElementsByClassName('addAktifitas')
+        var addUsername = input[0].value
+        var addHari = input[1].value
+        var addPoster = input[2].value
+        listData.push(new toDo(addUsername,addHari,addPoster))
+        showAdmin(listData)
+    }
+    
+    const onDelete=(y)=>{
+    var conf = confirm('Apakah anda yakin akan hapus data ini?')
+    if(conf){
+        listData.splice(y,1)
+    }
+    showAdmin(listData)
+
+    const logout = () =>{
+        document.getElementsByTagName('tbody')[0].innerHTML = ''
+    }
+
+    const onSaveEdit=(saveEdit)=>{
+    var newToDo = document.getElementById(`editToDo${saveEdit}`).value
+    var newHari = document.getElementById(`editHari${saveEdit}`).value
+    var newPict = document.getElementById(`editGambar${saveEdit}`).value
+    console.log(newToDo,newHari,newPict)
+    if(newToDo){
+        listData[saveEdit].aktifitas=newToDo
+    }
+    if(newHari!==listData[saveEdit].hari){
+        listData[saveEdit].hari=newHari
+    }
+    if(newPict){
+        listData[saveEdit].gambar=newPict
+    }
+    indexEdit=-1
+    printData(listData)
+
+}
+}
+
+</script>
+</html>
